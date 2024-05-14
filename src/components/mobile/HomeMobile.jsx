@@ -114,7 +114,7 @@ const Categories = () => {
   );
 };
 
-const Recomendation = () => {
+export const Recomendation = () => {
   const [productsList, setProductsList] = useState([]);
   const baseUrl = "http://localhost:3000";
 
@@ -172,7 +172,17 @@ const Recomendation = () => {
                 <p className="font-semibold text-sm">
                   {truncateTitle(item.name)}
                 </p>
-                <p className="font-bold text-[#e00025]">
+                <div className="w-full flex justify-between">
+                  <p className="font-bold text-[#e00025]">
+                    {dollar.format(
+                      item.price - item.price * (item.discount / 100)
+                    )}
+                  </p>
+                  <p className="text-xs text-blue-500">
+                    {item.discount < 1 ? "" : `save ${item.discount}%`}
+                  </p>
+                </div>
+                <p className={item.discount < 1 ? "hidden" : "text-zinc-600 font-light text-sm line-through"}>
                   {dollar.format(item.price)}
                 </p>
               </div>

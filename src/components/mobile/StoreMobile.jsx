@@ -13,6 +13,7 @@ export default function StoreMobile() {
   const userLogin = localStorage.getItem("username");
   const token = localStorage.getItem("accessToken");
   const navigate = useNavigate();
+  const [storeName, setStoreName] = useState("");
 
   useEffect(() => {
     if (!token) return navigate("/login");
@@ -30,8 +31,21 @@ export default function StoreMobile() {
     );
   };
 
+  const getStore = () => {
+    Axios.get(`${baseUrl}/api/client/getstore/${userLogin}`).then(
+      (response) => {
+        if (response.data.error) {
+          console.log(response.data.error);
+        } else {
+          setStoreName(response.data[0].name);
+        }
+      }
+    );
+  };
+
   useEffect(() => {
     getProduct();
+    getStore();
   }, []);
 
   const getDetailsProduct = (id) => {
@@ -49,7 +63,7 @@ export default function StoreMobile() {
     <>
       <div className="w-full min-h-screen py-4 relative overflow-hidden">
         <div className="w-full px-2 flex justify-center items-center">
-          <h1 className="font-bold text-lg">Store Name</h1>
+          <h1 className="font-bold text-lg">{storeName}</h1>
         </div>
         <div className="w-full py-5">
           <Widget productList={productList} />

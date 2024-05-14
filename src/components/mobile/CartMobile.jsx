@@ -7,6 +7,7 @@ import { ListCategory } from "./CategoriesMobile";
 import { FiMapPin } from "react-icons/fi";
 import { PiNotepad } from "react-icons/pi";
 import { useNavigate } from "react-router-dom";
+import { Recomendation } from "./HomeMobile";
 
 export default function CartMobile() {
   const [loginStatus, setLoginStatus] = useState(false);
@@ -71,7 +72,7 @@ export default function CartMobile() {
             <NotAuth />
           )}
         </div>
-        <ListCategory />
+        <Recomendation />
         <div
           className={`fixed z-10 min-h-screen w-full bg-zinc-200 top-0 p-2 duration-500 ${checkoutPosition}`}
         >

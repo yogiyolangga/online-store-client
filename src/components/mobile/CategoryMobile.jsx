@@ -2,15 +2,38 @@ import { useParams } from "react-router-dom";
 import { FaStar } from "react-icons/fa6";
 import { IoSearch } from "react-icons/io5";
 import { PiArrowFatLineLeftDuotone } from "react-icons/pi";
+import Axios from "axios";
+import { useEffect, useState } from "react";
 
 import { Recomendations } from "../sampleContent";
 
 export default function CategoryMobile() {
   const categoryName = useParams();
+  const baseUrl = "http://localhost:3000";
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   function goBack() {
     window.history.back();
   }
+
+  const getProductByCategory = () => {
+    Axios.get(
+      `${baseUrl}/api/client/getproductbycategory/${categoryName.category}`
+    ).then((response) => {
+      if (response.data.error) {
+        console.log(response.data.error);
+      } else if (response.data.success) {
+        setProducts(response.data.resultProducts);
+      } else {
+        alert("Error, try again later!");
+      }
+    });
+  };
+
+  useEffect(() => {
+    getProductByCategory();
+  }, []);
 
   return (
     <>
@@ -22,7 +45,7 @@ export default function CategoryMobile() {
           </h1>
         </div>
         <SearchBar categoryName={categoryName} />
-        <ProductList />
+        <ProductList products={products} baseUrl={baseUrl} />
       </div>
     </>
   );
@@ -48,38 +71,79 @@ const SearchBar = ({ categoryName }) => {
   );
 };
 
-const ProductList = () => {
+const ProductList = ({ products, baseUrl }) => {
   const dollar = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: 2,
   });
+
+  function truncateTitle(str) {
+    if (str.length > 20) {
+      return str.substring(0, 30) + "..."; // Mengambil karakter dari indeks 0 hingga 7
+    } else {
+      return str; // Mengembalikan string asli jika panjangnya kurang dari atau sama dengan 8 karakter
+    }
+  }
+
   return (
     <>
       <div className="w-full py-2">
         <div className="w-full flex flex-wrap justify-evenly py-3 gap-2">
-          {Recomendations.map((item) => (
-            <a
-              href={`/product/${item.id}`}
-              key={item.id}
-              className="w-[48%] flex flex-col gap-1 bg-white rounded-md shadow pb-2"
-            >
-              <img src={item.src} alt={item.title} className="w-full" />
-              <div className="w-full px-1 flex flex-col">
-                <p className="font-semibold text-sm truncate">{item.title}</p>
-                <p className="font-bold text-[#e00025]">
-                  {dollar.format(item.price)}
-                </p>
-              </div>
-              <div className="w-full flex justify-between px-1">
-                <div className="flex gap-1 items-center">
-                  <FaStar className="text-yellow-300" />
-                  <p className="text-xs text-zinc-600">{item.rating}</p>
+          {products.length < 1 ? (
+            <div className="w-full bg-white py-2 flex flex-col items-center gap-2">
+              {/* image */}
+              <p className="text-zinc-500">No have product on this category yet</p>
+            </div>
+          ) : (
+            products.map((item) => (
+              <a
+                href={`/product/${item.id_product}`}
+                key={item.id_product}
+                className="w-[48%] flex flex-col gap-1 bg-white rounded-md shadow pb-2"
+              >
+                <img
+                  src={`${baseUrl}/${item.img}`}
+                  alt={item.name}
+                  className="w-full"
+                />
+
+                <div className="w-full px-1 flex flex-col">
+                  <p className="font-semibold text-sm">
+                    {truncateTitle(item.name)}
+                  </p>
+                  <div className="w-full flex justify-between">
+                    <p className="font-bold text-[#e00025]">
+                      {dollar.format(
+                        item.price - item.price * (item.discount / 100)
+                      )}
+                    </p>
+                    <p className="text-xs text-blue-500">
+                      {item.discount < 1 ? "" : `save ${item.discount}%`}
+                    </p>
+                  </div>
+                  <p
+                    className={
+                      item.discount < 1
+                        ? "hidden"
+                        : "text-zinc-600 font-light text-sm line-through"
+                    }
+                  >
+                    {dollar.format(item.price)}
+                  </p>
                 </div>
-                <p className="text-zinc-600 text-xs">{item.sold}</p>
-              </div>
-            </a>
-          ))}
+                <div className="w-full flex justify-between px-1">
+                  <div className="flex gap-1 items-center">
+                    <FaStar className="text-yellow-300" />
+                    <p className="text-xs text-zinc-600">
+                      {item.rating === 0 ? 4.2 : item.rating}
+                    </p>
+                  </div>
+                  <p className="text-zinc-600 text-xs">{item.sold}</p>
+                </div>
+              </a>
+            ))
+          )}
         </div>
       </div>
     </>

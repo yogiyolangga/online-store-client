@@ -138,7 +138,7 @@ const ProductForm = ({ userLogin, baseUrl }) => {
           </div>
           <div className="bg-zinc-200 py-1 px-2 rounded-md border border-zinc-600">
             <input
-              type="number"
+              type="text"
               placeholder="Price Product in $"
               className="py-1 bg-zinc-200 w-full outline-none"
               onChange={(e) => {
@@ -148,7 +148,7 @@ const ProductForm = ({ userLogin, baseUrl }) => {
           </div>
           <div className="bg-zinc-200 py-1 px-2 rounded-md border border-zinc-600">
             <input
-              type="number"
+              type="text"
               placeholder="Stock Product"
               className="py-1 bg-zinc-200 w-full outline-none"
               onChange={(e) => {
@@ -158,7 +158,7 @@ const ProductForm = ({ userLogin, baseUrl }) => {
           </div>
           <div className="bg-zinc-200 py-1 px-2 rounded-md border border-zinc-600">
             <input
-              type="number"
+              type="text"
               placeholder="Discount Product % (optional)"
               className="py-1 bg-zinc-200 w-full outline-none"
               onChange={(e) => {
