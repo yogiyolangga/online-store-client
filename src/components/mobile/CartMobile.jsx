@@ -50,7 +50,12 @@ export default function CartMobile() {
   useEffect(() => {
     setTotalItems(cartItems.reduce((total, item) => total + item.quantity, 0));
     setSubTotalPrice(
-      cartItems.reduce((total, item) => total + item.quantity * item.price, 0)
+      cartItems.reduce(
+        (total, item) =>
+          total +
+          item.quantity * (item.price - item.price * (item.discount / 100)),
+        0
+      )
     );
   }, [cartItems]);
 
@@ -172,8 +177,21 @@ const ShoppingCart = ({
                       </p>
                     </div>
                     <div className="w-full flex justify-between pr-2">
-                      <div className="font-bold">
-                        {dollar.format(item.quantity * item.price)}
+                      <div className="font-bold flex items-center gap-1">
+                        <p>
+                          {dollar.format(
+                            item.price - item.price * (item.discount / 100)
+                          )}
+                        </p>
+                        <p
+                          className={
+                            item.discount < 1
+                              ? "hidden"
+                              : "text-zinc-600 font-light text-xs line-through"
+                          }
+                        >
+                          {dollar.format(item.price)}
+                        </p>
                       </div>
                       <div className="flex gap-0.5 items-center">
                         <button

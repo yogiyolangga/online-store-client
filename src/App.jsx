@@ -17,6 +17,7 @@ import StoreMobile from "./components/mobile/StoreMobile";
 import AddProductMobile from "./components/mobile/AddProductMobile";
 import Orders from "./components/mobile/OrdersMobile";
 import Payment from "./components/mobile/PaymentMobile";
+import Search from "./components/mobile/SearchMobile";
 
 function App() {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
@@ -42,6 +43,7 @@ function App() {
               <Route path="/cart" element={<CartMobile />} />
               <Route path="/categories" element={<CategoriesMobile />} />
               <Route path="/category/:category" element={<CategoryMobile />} />
+              <Route path="/search" element={<Search />} />
               <Route path="/product/:id" element={<ProductMobile />} />
               <Route path="/login" element={<LoginUserMobile />} />
               <Route path="/register" element={<RegisterMobile />} />

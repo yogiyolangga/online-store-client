@@ -1,5 +1,4 @@
 import { FaStar } from "react-icons/fa6";
-import { BsThreeDots } from "react-icons/bs";
 import { useEffect, useState } from "react";
 import Axios from "axios";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -9,6 +8,7 @@ export default function CategoriesMobile() {
   const baseUrl = "http://localhost:3000";
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
+  const [category, setCategory] = useState("");
 
   const getCategories = () => {
     Axios.get(`${baseUrl}/api/admin/categories`).then((response) => {
@@ -33,6 +33,7 @@ export default function CategoriesMobile() {
 
       if (response.data.success) {
         setProducts(response.data.result);
+        setCategory(response.data.categoryName);
       } else if (response.data.error) {
         console.log(response.data.error);
       } else {
@@ -81,7 +82,11 @@ export default function CategoriesMobile() {
           </div>
         ) : (
           <div>
-            <ListCategory products={products} baseUrl={baseUrl} />
+            <ListCategory
+              products={products}
+              baseUrl={baseUrl}
+              category={category}
+            />
           </div>
         )}
       </div>
@@ -89,7 +94,7 @@ export default function CategoriesMobile() {
   );
 }
 
-export const ListCategory = ({ products, baseUrl }) => {
+export const ListCategory = ({ products, baseUrl, category }) => {
   const dollar = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -107,6 +112,7 @@ export const ListCategory = ({ products, baseUrl }) => {
   return (
     <>
       <div className="w-full px-2 bg-zinc-200 pb-20">
+        <h1 className="pt-3 px-2 font-semibold">{category}</h1>
         <div className="w-full flex flex-wrap justify-evenly py-3 gap-2">
           {products.map((item) => (
             <a

@@ -4,8 +4,8 @@ import { IoSearch } from "react-icons/io5";
 import { PiArrowFatLineLeftDuotone } from "react-icons/pi";
 import Axios from "axios";
 import { useEffect, useState } from "react";
-
-import { Recomendations } from "../sampleContent";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { SearchBar } from "./HomeMobile";
 
 export default function CategoryMobile() {
   const categoryName = useParams();
@@ -17,10 +17,14 @@ export default function CategoryMobile() {
     window.history.back();
   }
 
-  const getProductByCategory = () => {
-    Axios.get(
-      `${baseUrl}/api/client/getproductbycategory/${categoryName.category}`
-    ).then((response) => {
+  const getProductByCategory = async () => {
+    try {
+      const response = await Axios.get(
+        `${baseUrl}/api/client/getproductbycategory/${categoryName.category}`
+      );
+
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       if (response.data.error) {
         console.log(response.data.error);
       } else if (response.data.success) {
@@ -28,7 +32,11 @@ export default function CategoryMobile() {
       } else {
         alert("Error, try again later!");
       }
-    });
+
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -44,32 +52,41 @@ export default function CategoryMobile() {
             Category {categoryName.category}
           </h1>
         </div>
-        <SearchBar categoryName={categoryName} />
-        <ProductList products={products} baseUrl={baseUrl} />
+        <div>
+        <SearchBar />
+        </div>
+        {loading === true ? (
+          <div className="w-full flex gap-1 py-2 justify-center flex-col items-center">
+            <AiOutlineLoading3Quarters className="animate-spin" />
+            <p className="text-zinc-600">Loading</p>
+          </div>
+        ) : (
+          <ProductList products={products} baseUrl={baseUrl} />
+        )}
       </div>
     </>
   );
 }
 
-const SearchBar = ({ categoryName }) => {
-  return (
-    <>
-      <div className="w-full py-2 px-4 bg-white rounded-md shadow">
-        <div className="w-full flex gap-0.5 items-center justify-evenly border border-[#e00025] rounded-3xl py-1 px-1">
-          <IoSearch className="text-zinc-500 text-xl" />
-          <input
-            type="text"
-            placeholder={`Search in ${categoryName.category}`}
-            className="flex-1 active:outline-none p-1 text-sm"
-          />
-          <button className="bg-gradient-to-r from-[#032ea1] to-[#e00025] rounded-2xl text-white font-semibold text-sm px-2 py-1">
-            Search
-          </button>
-        </div>
-      </div>
-    </>
-  );
-};
+// const SearchBar = ({ categoryName }) => {
+//   return (
+//     <>
+//       <div className="w-full py-2 px-4 bg-white rounded-md shadow">
+//         <div className="w-full flex gap-0.5 items-center justify-evenly border border-[#e00025] rounded-3xl py-1 px-1">
+//           <IoSearch className="text-zinc-500 text-xl" />
+//           <input
+//             type="text"
+//             placeholder={`Search in ${categoryName.category}`}
+//             className="flex-1 outline-none p-1 text-sm"
+//           />
+//           <button className="bg-gradient-to-r from-[#032ea1] to-[#e00025] rounded-2xl text-white font-semibold text-sm px-2 py-1">
+//             Search
+//           </button>
+//         </div>
+//       </div>
+//     </>
+//   );
+// };
 
 const ProductList = ({ products, baseUrl }) => {
   const dollar = new Intl.NumberFormat("en-US", {
@@ -93,7 +110,9 @@ const ProductList = ({ products, baseUrl }) => {
           {products.length < 1 ? (
             <div className="w-full bg-white py-2 flex flex-col items-center gap-2">
               {/* image */}
-              <p className="text-zinc-500">No have product on this category yet</p>
+              <p className="text-zinc-500">
+                No have product on this category yet
+              </p>
             </div>
           ) : (
             products.map((item) => (

@@ -106,9 +106,25 @@ const ProductData = ({ baseUrl }) => {
           className="w-full"
         />
         <div className="w-full px-2 flex flex-col gap-1 bg-white">
-          <div className="w-full flex justify-between items-center pt-2">
-            <div className="font-bold text-2xl text-[#032ea1]">
-              {dollar.format(product.price)}
+          <div className="w-full flex justify-between items-start pt-2">
+            <div className="flex flex-col">
+              <p
+                className={
+                  product.discount < 1
+                    ? "hidden"
+                    : "text-zinc-600 font-light text-sm line-through"
+                }
+              >
+                {dollar.format(product.price)}
+              </p>
+              <p className="text-xs text-blue-500">
+                {product.discount < 1 ? "" : `save ${product.discount}%`}
+              </p>
+              <p className="font-bold text-2xl text-[#032ea1]">
+                {dollar.format(
+                  product.price - product.price * (product.discount / 100)
+                )}
+              </p>
             </div>
             <VscLiveShare className="text-2xl text-zinc-700" />
           </div>
@@ -199,10 +215,26 @@ const Recomendation = () => {
                 />
               </div>
               <div className="w-full px-1 flex flex-col">
-                <p className="font-semibold text-sm truncate">
+                <p className="font-semibold text-sm">
                   {truncateTitle(item.name)}
                 </p>
-                <p className="font-bold text-[#e00025]">
+                <div className="w-full flex justify-between">
+                  <p className="font-bold text-[#e00025]">
+                    {dollar.format(
+                      item.price - item.price * (item.discount / 100)
+                    )}
+                  </p>
+                  <p className="text-xs text-blue-500">
+                    {item.discount < 1 ? "" : `save ${item.discount}%`}
+                  </p>
+                </div>
+                <p
+                  className={
+                    item.discount < 1
+                      ? "hidden"
+                      : "text-zinc-600 font-light text-sm line-through"
+                  }
+                >
                   {dollar.format(item.price)}
                 </p>
               </div>

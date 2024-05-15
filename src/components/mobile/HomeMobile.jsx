@@ -7,6 +7,7 @@ import Axios from "axios";
 
 import { BannersImgSlider } from "../sampleContent";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function HomeMobile() {
   const token = localStorage.getItem("accessToken");
@@ -29,7 +30,13 @@ export default function HomeMobile() {
   );
 }
 
-const SearchBar = () => {
+export const SearchBar = () => {
+  const [productName, setProductName] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    navigate(`/search?name=${productName}`);
+  };
   return (
     <>
       <div className="w-full py-2 px-4 bg-white">
@@ -39,8 +46,14 @@ const SearchBar = () => {
             type="text"
             placeholder="Search Product"
             className="flex-1 outline-none p-1 text-sm"
+            onChange={(e) => {
+              setProductName(e.target.value);
+            }}
           />
-          <button className="bg-gradient-to-r from-[#032ea1] to-[#e00025] rounded-2xl text-white font-semibold text-sm px-2 py-1">
+          <button
+            className="bg-gradient-to-r from-[#032ea1] to-[#e00025] rounded-2xl text-white font-semibold text-sm px-2 py-1"
+            onClick={handleSearch}
+          >
             Search
           </button>
         </div>
@@ -182,7 +195,13 @@ export const Recomendation = () => {
                     {item.discount < 1 ? "" : `save ${item.discount}%`}
                   </p>
                 </div>
-                <p className={item.discount < 1 ? "hidden" : "text-zinc-600 font-light text-sm line-through"}>
+                <p
+                  className={
+                    item.discount < 1
+                      ? "hidden"
+                      : "text-zinc-600 font-light text-sm line-through"
+                  }
+                >
                   {dollar.format(item.price)}
                 </p>
               </div>
