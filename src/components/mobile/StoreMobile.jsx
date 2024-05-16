@@ -4,6 +4,10 @@ import Axios from "axios";
 import { LuClipboardEdit } from "react-icons/lu";
 import { IoArrowUndoSharp } from "react-icons/io5";
 import { MdDeleteForever } from "react-icons/md";
+import { FaParachuteBox } from "react-icons/fa";
+import { GoPackageDependents } from "react-icons/go";
+import { FaPlaneDeparture } from "react-icons/fa";
+import { IoCheckmarkDoneCircleSharp } from "react-icons/io5";
 
 export default function StoreMobile() {
   const [productList, setProductList] = useState([]);
@@ -14,6 +18,9 @@ export default function StoreMobile() {
   const token = localStorage.getItem("accessToken");
   const navigate = useNavigate();
   const [storeName, setStoreName] = useState("");
+  const [orderRequest, setOrderRequest] = useState(0);
+  const [orderShipping, setOrderShipping] = useState(0);
+  const [orderCompleted, setOrderCompleted] = useState(0);
 
   useEffect(() => {
     if (!token) return navigate("/login");
@@ -43,9 +50,30 @@ export default function StoreMobile() {
     );
   };
 
+  const getRequestOrder = (status) => {
+    Axios.get(`${baseUrl}/api/client/seller/${userLogin}/${status}`).then(
+      (response) => {
+        if (response.data.error) {
+          console.log(response.data.error);
+        } else if (status === "paid" && response.data.success) {
+          setOrderRequest(response.data.result[0].total_rows);
+        } else if (status === "shipping" && response.data.success) {
+          setOrderShipping(response.data.result[0].total_rows);
+        } else if (status === "completed" && response.data.success) {
+          setOrderCompleted(response.data.result[0].total_rows);
+        } else {
+          console.log("Error Request!");
+        }
+      }
+    );
+  };
+
   useEffect(() => {
     getProduct();
     getStore();
+    getRequestOrder("paid");
+    getRequestOrder("shipping");
+    getRequestOrder("completed");
   }, []);
 
   const getDetailsProduct = (id) => {
@@ -61,12 +89,18 @@ export default function StoreMobile() {
 
   return (
     <>
-      <div className="w-full min-h-screen py-4 relative overflow-hidden">
-        <div className="w-full px-2 flex justify-center items-center">
+      <div className="w-full min-h-screen pt-4 pb-20 relative overflow-hidden">
+        <div className="w-full px-2 flex justify-between items-center">
+          <h1 className="font-bold text-lg text-blue-500">Phsar Leau</h1>
           <h1 className="font-bold text-lg">{storeName}</h1>
         </div>
         <div className="w-full py-5">
-          <Widget productList={productList} />
+          <Widget
+            productList={productList}
+            orderCompleted={orderCompleted}
+            orderRequest={orderRequest}
+            orderShipping={orderShipping}
+          />
         </div>
         <div className="px-2">
           <ProductList
@@ -85,28 +119,75 @@ export default function StoreMobile() {
   );
 }
 
-const Widget = ({ productList }) => {
+const Widget = ({
+  productList,
+  orderRequest,
+  orderShipping,
+  orderCompleted,
+}) => {
   return (
     <>
       <div className="w-full flex flex-wrap justify-center items-center gap-3">
         <a
           href="/account/store/addproduct"
-          className="flex flex-col justify-center items-center bg-gradient-to-r from-[#0486d1] to-[#0ccbce] rounded-md w-[45%] h-24 shadow-md shadow-black active:scale-95 duration-100"
+          className="flex flex-col justify-evenly items-center bg-zinc-100 rounded-xl w-[45%] py-3 shadow border"
         >
-          <div className="text-lg font-semibold text-zinc-100">Add Product</div>
-          <p className="text-white font-semibold text-lg">
-            {productList.length}
+          <div className="w-full flex justify-center gap-5 items-center">
+            <div className="p-2 bg-white rounded-full">
+              <FaParachuteBox className="text-blue-500" />
+            </div>
+            <p className="text-black font-extrabold text-xl">
+              {productList.length}
+            </p>
+          </div>
+          <p className="text-xs text-center font-semibold text-zinc-600">
+            sell something here
           </p>
         </a>
-        <div className="flex flex-col justify-center items-center bg-zinc-200 rounded-md w-[45%] h-24 border border-zinc-300">
-          <div>Pending Order</div>
-        </div>
-        <div className="flex flex-col justify-center items-center bg-zinc-200 rounded-md w-[45%] h-24 border border-zinc-300">
-          <div>Order Progress</div>
-        </div>
-        <div className="flex flex-col justify-center items-center bg-zinc-200 rounded-md w-[45%] h-24 border border-zinc-300">
-          <div>Order Completed</div>
-        </div>
+        <a
+          href="#"
+          className="flex flex-col justify-evenly items-center bg-zinc-100 rounded-xl w-[45%] py-3 shadow border"
+        >
+          <div className="w-full flex justify-center gap-5 items-center">
+            <div className="p-2 bg-white rounded-full">
+              <GoPackageDependents className="text-blue-500" />
+            </div>
+            <p className="text-black font-extrabold text-xl">{orderRequest}</p>
+          </div>
+          <p className="text-xs text-center font-semibold text-zinc-600">
+            order request
+          </p>
+        </a>
+        <a
+          href="#"
+          className="flex flex-col justify-evenly items-center bg-zinc-100 rounded-xl w-[45%] py-3 shadow border"
+        >
+          <div className="w-full flex justify-center gap-5 items-center">
+            <div className="p-2 bg-white rounded-full">
+              <FaPlaneDeparture className="text-blue-500" />
+            </div>
+            <p className="text-black font-extrabold text-xl">{orderShipping}</p>
+          </div>
+          <p className="text-xs text-center font-semibold text-zinc-600">
+            order in delivery
+          </p>
+        </a>
+        <a
+          href="#"
+          className="flex flex-col justify-evenly items-center bg-zinc-100 rounded-xl w-[45%] py-3 shadow border"
+        >
+          <div className="w-full flex justify-center gap-5 items-center">
+            <div className="p-2 bg-white rounded-full">
+              <IoCheckmarkDoneCircleSharp className="text-blue-500" />
+            </div>
+            <p className="text-black font-extrabold text-xl">
+              {orderCompleted}
+            </p>
+          </div>
+          <p className="text-xs text-center font-semibold text-zinc-600">
+            completed order
+          </p>
+        </a>
       </div>
     </>
   );
@@ -150,7 +231,10 @@ const ProductList = ({ productList, getDetailsProduct, baseUrl }) => {
   };
   return (
     <>
-      <div className="w-full py-4">
+      <div className="w-full pb-4">
+        <h1 className="text-center font-semibold text-base pb-1">
+          Your products
+        </h1>
         <div className="flex justify-between bg-zinc-700 text-white py-2 items-center rounded-md">
           <div className="flex flex-1 font-semibold text-lg  justify-center">
             Product

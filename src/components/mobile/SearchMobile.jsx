@@ -85,10 +85,15 @@ const ProductList = ({ productsList, baseUrl }) => {
       <div>
         <div className="w-full flex flex-wrap justify-evenly py-3 gap-2 pb-20 px-2 bg-zinc-200">
           {productsList.length < 1 ? (
-            <div>
-              <h1 className="text-2xl font-bold text-zinc-600 text-center">
-                No products found
+            <div className="w-full flex flex-col gap-3 items-center justify-center">
+              <h1 className="text-lg font-bold text-zinc-600 text-center">
+                Sorry, the product you are looking for is not yet available
               </h1>
+              <img
+                src="assets/img/not-found.png"
+                alt="Not found product"
+                className="w-40"
+              />
             </div>
           ) : (
             productsList.map((item) => (

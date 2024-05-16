@@ -92,7 +92,7 @@ const ProductData = ({ baseUrl }) => {
     <>
       <div className="w-full relative">
         <div
-          className={`fixed w-full bottom-0 z-10 bg-zinc-200 duration-200 rounded-t-3xl border border-black py-2 px-2 ${positionOption}`}
+          className={`fixed w-full max-w-[360px] bottom-0 z-10 bg-zinc-200 duration-200 rounded-t-3xl border border-black py-2 px-2 ${positionOption}`}
         >
           <OptionProduct
             setPositionOption={setPositionOption}

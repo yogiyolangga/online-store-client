@@ -110,12 +110,18 @@ const AccountData = ({ userLogin, userFullName, userNumber, storeStatus }) => {
           <div className="font-semibold flex-1">My Address</div>
           <IoIosArrowForward className="text-lg" />
         </a>
-        <a href="/account/orders" className="w-full flex justify-between items-center gap-1">
+        <a
+          href="/account/orders"
+          className="w-full flex justify-between items-center gap-1"
+        >
           <PiPackageDuotone className="text-xl text-[#032ea1]" />
           <div className="font-semibold flex-1">My Orders</div>
           <IoIosArrowForward className="text-lg" />
         </a>
-        <a href="/cart" className="w-full flex justify-between items-center gap-1">
+        <a
+          href="/cart"
+          className="w-full flex justify-between items-center gap-1"
+        >
           <IoCartOutline className="text-xl text-[#032ea1]" />
           <div className="font-semibold flex-1">My Cart</div>
           <IoIosArrowForward className="text-lg" />

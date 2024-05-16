@@ -225,11 +225,26 @@ const DataList = ({ dataOrders, baseUrl }) => {
                     className="w-10 h-10"
                   />
                 </a>
-                <div className="flex-1 text-sm">{data.name}</div>
+                <div className="flex-1 text-sm">
+                  {StringTruncate(data.name)}
+                </div>
                 <div>
                   <div className="text-zinc-600 text-xs">x{data.quantity}</div>
                   <div className="text-sm text-blue-500">
-                    {dollar.format(data.price)}
+                    <p>
+                      {dollar.format(
+                        data.price - data.price * (data.discount / 100)
+                      )}
+                    </p>
+                    <p
+                      className={
+                        data.discount < 1
+                          ? "hidden"
+                          : "text-zinc-600 font-light text-xs line-through"
+                      }
+                    >
+                      {dollar.format(data.price)}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -240,7 +255,10 @@ const DataList = ({ dataOrders, baseUrl }) => {
                 <div className="text-sm font-semibold">
                   Total Order:{" "}
                   <span className="text-blue-500">
-                    {dollar.format(data.price * data.quantity)}
+                    {dollar.format(
+                      (data.price - data.price * (data.discount / 100)) *
+                        data.quantity
+                    )}
                   </span>
                 </div>
               </div>

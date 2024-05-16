@@ -79,7 +79,7 @@ export default function CartMobile() {
         </div>
         <Recomendation />
         <div
-          className={`fixed z-10 min-h-screen w-full bg-zinc-200 top-0 p-2 duration-500 ${checkoutPosition}`}
+          className={`fixed z-10 min-h-screen w-full max-w-[360px] bg-zinc-200 top-0 p-2 duration-500 ${checkoutPosition}`}
         >
           <Checkout
             setCheckoutPosition={setCheckoutPosition}
@@ -431,7 +431,20 @@ const Checkout = ({
                 </div>
                 <div className="w-full flex justify-between pr-2">
                   <div className="font-bold">
-                    {dollar.format(item.quantity * item.price)}
+                    <p>
+                      {dollar.format(
+                        item.price - item.price * (item.discount / 100)
+                      )}
+                    </p>
+                    <p
+                      className={
+                        item.discount < 1
+                          ? "hidden"
+                          : "text-zinc-600 font-light text-xs line-through"
+                      }
+                    >
+                      {dollar.format(item.price)}
+                    </p>
                   </div>
                   <div className="flex gap-0.5 items-center">
                     <div className="text-zinc-800 rounded flex justify-center items-center font-semibold text-sm gap-1">

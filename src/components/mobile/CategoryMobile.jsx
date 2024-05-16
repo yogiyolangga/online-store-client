@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom";
 import { FaStar } from "react-icons/fa6";
-import { IoSearch } from "react-icons/io5";
 import { PiArrowFatLineLeftDuotone } from "react-icons/pi";
 import Axios from "axios";
 import { useEffect, useState } from "react";
