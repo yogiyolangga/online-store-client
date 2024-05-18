@@ -71,7 +71,7 @@ export default function Orders() {
   useEffect(() => {
     if (status === "pending" && menu === "pending") {
       getData();
-    } else if (status === "paid" && menu === "paid") {
+    } else if (status === "request" && menu === "request") {
       getData();
     } else if (status === "shipping" && menu === "shipping") {
       getData();
@@ -89,8 +89,8 @@ export default function Orders() {
   };
 
   const handleClickPackaged = () => {
-    setStatus("paid");
-    setMenu("paid");
+    setStatus("request");
+    setMenu("request");
     setLoading(true);
   };
 
@@ -142,7 +142,7 @@ export default function Orders() {
             onClick={handleClickPackaged}
           >
             <PiPackageDuotone
-              className={`text-2xl ${menu === "paid" ? "text-blue-500" : ""}`}
+              className={`text-2xl ${menu === "request" ? "text-blue-500" : ""}`}
             />
             <span className="text-xs">Packaged</span>
           </div>
@@ -227,6 +227,7 @@ const DataList = ({ dataOrders, baseUrl }) => {
                 </a>
                 <div className="flex-1 text-sm">
                   {StringTruncate(data.name)}
+                  <p>{data.additional_info}</p>
                 </div>
                 <div>
                   <div className="text-zinc-600 text-xs">x{data.quantity}</div>

@@ -55,7 +55,7 @@ export default function StoreMobile() {
       (response) => {
         if (response.data.error) {
           console.log(response.data.error);
-        } else if (status === "paid" && response.data.success) {
+        } else if (status === "request" && response.data.success) {
           setOrderRequest(response.data.result[0].total_rows);
         } else if (status === "shipping" && response.data.success) {
           setOrderShipping(response.data.result[0].total_rows);
@@ -71,7 +71,7 @@ export default function StoreMobile() {
   useEffect(() => {
     getProduct();
     getStore();
-    getRequestOrder("paid");
+    getRequestOrder("request");
     getRequestOrder("shipping");
     getRequestOrder("completed");
   }, []);
@@ -145,7 +145,7 @@ const Widget = ({
           </p>
         </a>
         <a
-          href="#"
+          href="/account/store/request"
           className="flex flex-col justify-evenly items-center bg-zinc-100 rounded-xl w-[45%] py-3 shadow border"
         >
           <div className="w-full flex justify-center gap-5 items-center">
@@ -159,7 +159,7 @@ const Widget = ({
           </p>
         </a>
         <a
-          href="#"
+          href="/account/store/shipping"
           className="flex flex-col justify-evenly items-center bg-zinc-100 rounded-xl w-[45%] py-3 shadow border"
         >
           <div className="w-full flex justify-center gap-5 items-center">
@@ -173,7 +173,7 @@ const Widget = ({
           </p>
         </a>
         <a
-          href="#"
+          href="/account/store/complete"
           className="flex flex-col justify-evenly items-center bg-zinc-100 rounded-xl w-[45%] py-3 shadow border"
         >
           <div className="w-full flex justify-center gap-5 items-center">

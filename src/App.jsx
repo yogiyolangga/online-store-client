@@ -18,6 +18,9 @@ import AddProductMobile from "./components/mobile/AddProductMobile";
 import Orders from "./components/mobile/OrdersMobile";
 import Payment from "./components/mobile/PaymentMobile";
 import Search from "./components/mobile/SearchMobile";
+import OrderRequest from "./components/mobile/OrderRequest";
+import OrderShipping from "./components/mobile/OrderShipping";
+import OrderComplete from "./components/mobile/OrderComplete";
 
 function App() {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
@@ -56,6 +59,15 @@ function App() {
               <Route path="/account/openstore" element={<CreateStore />} />
               <Route path="/account/store" element={<StoreMobile />} />
               <Route path="/account/orders" element={<Orders />} />
+              <Route path="/account/store/request" element={<OrderRequest />} />
+              <Route
+                path="/account/store/complete"
+                element={<OrderComplete />}
+              />
+              <Route
+                path="/account/store/shipping"
+                element={<OrderShipping />}
+              />
               <Route path="/payment" element={<Payment />} />
               <Route
                 path="/account/store/addproduct"

@@ -307,6 +307,7 @@ const Checkout = ({
   const [message, setMessage] = useState("");
   const [pyMethod, setPyMethod] = useState("");
   const [bankNumber, setBankNumber] = useState("");
+  const [listPyMethod, setListPyMethod] = useState([]);
 
   const serviceFee = 0.5;
   const delivery = 1;
@@ -322,8 +323,21 @@ const Checkout = ({
     });
   };
 
+  const getPyMethod = () => {
+    Axios.get(`${baseUrl}/api/admin/bank`).then((response) => {
+      if (response.data.error) {
+        console.log(response.data.error);
+      } else if (response.data.success) {
+        setListPyMethod(response.data.result);
+      } else {
+        console.log("Something Error");
+      }
+    });
+  };
+
   useEffect(() => {
     getUserData();
+    getPyMethod();
   }, []);
 
   const dollar = new Intl.NumberFormat("en-US", {
@@ -339,20 +353,6 @@ const Checkout = ({
       return string.substring(0, maxLength) + "...";
     }
   }
-
-  // temporary, static bank number
-  useEffect(() => {
-    const abaBank = "4465132548";
-    const wingBank = "7542345865";
-
-    if (pyMethod === "ABA") {
-      setBankNumber(abaBank);
-    } else if (pyMethod === "WING") {
-      setBankNumber(wingBank);
-    } else {
-      setBankNumber("");
-    }
-  });
 
   const makeOrder = () => {
     const confirmation = window.confirm("Want to make an order?");
@@ -376,6 +376,7 @@ const Checkout = ({
           console.log(response.data.error);
         } else if (response.data.pending) {
           alert(response.data.pending);
+          navigate('/payment')
         } else {
           console.log("Error, try again later!");
         }
@@ -493,12 +494,17 @@ const Checkout = ({
               id="pymethod"
               className="bg-zinc-200"
               onChange={(e) => {
+                const selectedOption = e.target.options[e.target.selectedIndex];
                 setPyMethod(e.target.value);
+                setBankNumber(selectedOption.getAttribute("number"));
               }}
             >
               <option value="">Choose</option>
-              <option value="ABA">ABA BANK</option>
-              <option value="WING">WING BANK</option>
+              {listPyMethod.map((item) => (
+                <option key={item.id} number={item.number} value={item.bank}>
+                  {item.bank}
+                </option>
+              ))}
             </select>
           </div>
         </div>

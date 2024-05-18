@@ -84,6 +84,9 @@ export default function Payment() {
                 <div className="text-3xl text-blue-500">
                   {dataPayment[0].bank_number}
                 </div>
+                <div className="text-xl text-zinc-700">
+                  {dataPayment[0].name}
+                </div>
                 <div className="text-sm text-zinc-400">
                   total payment :{" "}
                   <span className="text-black font-semibold text-2xl">
@@ -99,7 +102,11 @@ export default function Payment() {
                   </button>
                 </div>
                 <div className="w-full flex py-5 justify-center">
-                  <img src="assets/img/payment.png" alt="Payment" className="w-80" />
+                  <img
+                    src="assets/img/payment.png"
+                    alt="Payment"
+                    className="w-80"
+                  />
                 </div>
               </div>
             </div>

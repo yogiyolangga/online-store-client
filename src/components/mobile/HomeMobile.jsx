@@ -14,7 +14,6 @@ export default function HomeMobile() {
   const username = localStorage.getItem("username");
   if (token) {
     const decodeToken = jwtDecode(token);
-    console.log(username);
   } else {
     console.log("Please Sign In/Sign Up!");
   }
