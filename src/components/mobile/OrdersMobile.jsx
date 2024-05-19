@@ -142,7 +142,9 @@ export default function Orders() {
             onClick={handleClickPackaged}
           >
             <PiPackageDuotone
-              className={`text-2xl ${menu === "request" ? "text-blue-500" : ""}`}
+              className={`text-2xl ${
+                menu === "request" ? "text-blue-500" : ""
+              }`}
             />
             <span className="text-xs">Packaged</span>
           </div>
@@ -214,8 +216,15 @@ const DataList = ({ dataOrders, baseUrl }) => {
         ) : (
           dataOrders.map((data, index) => (
             <div key={index} className="w-full flec flex-col bg-white p-1">
-              <div className="w-full font-semibold truncate border-b py-1">
-                {data.store_name}
+              <div className="w-full px-1 flex justify-between border-b py-1">
+                <h1 className="font-semibold truncate">{data.store_name}</h1>
+                {data.carrier ? (
+                  <p className="text-blue-500 font-semibold text-sm">
+                    {data.carrier}, {data.tracking_number}
+                  </p>
+                ) : (
+                  ""
+                )}
               </div>
               <div className="w-full flex gap-2 justify-between border-b py-2 px-1">
                 <a href={`/product/${data.id_product}`}>
