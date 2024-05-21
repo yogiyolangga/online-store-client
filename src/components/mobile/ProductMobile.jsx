@@ -133,12 +133,10 @@ const ProductData = ({ baseUrl }) => {
             <div className="flex gap-1 items-center">
               <FaStar className="text-yellow-300" />
               <p className="text-xs text-zinc-600 border-r">
-                {product.rating === 0 ? "4.8" : product.rating}
+                {product.average_rating === null ? 3.2 : product.average_rating}
               </p>
             </div>
-            <p className="text-zinc-600 text-xs">{`(${
-              product.sold === 0 ? "38" : product.sold
-            })`}</p>
+            <p className="text-zinc-600 text-xs">{`(${product.total_sold})`}</p>
           </div>
           <div className="w-full flex flex-col gap-1">
             <div className="font-bold text-lg">Description Product</div>
@@ -241,9 +239,11 @@ const Recomendation = () => {
               <div className="w-full flex justify-between px-1">
                 <div className="flex gap-1 items-center">
                   <FaStar className="text-yellow-300" />
-                  <p className="text-xs text-zinc-600">{item.rating + 4.5}</p>
+                  <p className="text-xs text-zinc-600">
+                    {item.average_rating === null ? 3.2 : item.average_rating}
+                  </p>
                 </div>
-                <p className="text-zinc-600 text-xs">{item.sold}</p>
+                <p className="text-zinc-600 text-xs">{item.total_sold}</p>
               </div>
             </a>
           ))}

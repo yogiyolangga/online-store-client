@@ -7,6 +7,9 @@ import {
 } from "react-icons/pi";
 import { IoCloudDoneOutline } from "react-icons/io5";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { LuHistory } from "react-icons/lu";
+import { MdStar } from "react-icons/md";
+import { MdContentCopy } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Axios from "axios";
@@ -20,6 +23,9 @@ export default function Orders() {
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState("pending");
   const [paymentPendingCheck, setPaymentPendingCheck] = useState("");
+  const [ratingStyle, setRatingStyle] = useState("scale-0");
+  const [idProductRate, setIdProductRate] = useState("");
+  const [idOrderItemRate, setIdOrderItemRate] = useState("");
 
   // const getData = () => {
   //   setTimeout(() => {
@@ -41,6 +47,7 @@ export default function Orders() {
 
   // chatGPT
   const getData = async () => {
+    setLoading(true);
     try {
       const response = await Axios.get(
         `${baseUrl}/api/client/buyer/orders/${username}?status=${status}`
@@ -77,6 +84,8 @@ export default function Orders() {
       getData();
     } else if (status === "completed" && menu === "completed") {
       getData();
+    } else if (status === "history" && menu === "history") {
+      getData();
     } else {
       console.log("No data");
     }
@@ -104,6 +113,18 @@ export default function Orders() {
     setStatus("completed");
     setMenu("completed");
     setLoading(true);
+  };
+
+  const handleClickHistory = () => {
+    setStatus("history");
+    setMenu("history");
+    setLoading(true);
+  };
+
+  const giveStar = (id_product, order_item_id) => {
+    setRatingStyle("scale-100");
+    setIdProductRate(id_product);
+    setIdOrderItemRate(order_item_id);
   };
 
   return (
@@ -170,6 +191,17 @@ export default function Orders() {
             />
             <span className="text-xs">Finished</span>
           </div>
+          <div
+            className="flex flex-col items-center"
+            onClick={handleClickHistory}
+          >
+            <LuHistory
+              className={`text-2xl ${
+                menu === "history" ? "text-blue-500" : ""
+              }`}
+            />
+            <span className="text-xs">History</span>
+          </div>
         </div>
         <div className="w-full pb-20">
           {loading === true ? (
@@ -183,15 +215,33 @@ export default function Orders() {
               </p>
             </div>
           ) : (
-            <DataList dataOrders={dataOrders} baseUrl={baseUrl} />
+            <DataList
+              dataOrders={dataOrders}
+              baseUrl={baseUrl}
+              getData={getData}
+              giveStar={giveStar}
+            />
           )}
+        </div>
+        <div
+          className={`fixed w-full min-h-screen z-20 bg-zinc-600 bg-opacity-80 flex justify-center items-center top-0 px-2 ${ratingStyle} duration-100`}
+        >
+          <StarRate
+            baseUrl={baseUrl}
+            idProductRate={idProductRate}
+            username={username}
+            idOrderItemRate={idOrderItemRate}
+            setRatingStyle={setRatingStyle}
+            getData={getData}
+            setStatus={setStatus}
+          />
         </div>
       </div>
     </>
   );
 }
 
-const DataList = ({ dataOrders, baseUrl }) => {
+const DataList = ({ dataOrders, baseUrl, getData, giveStar }) => {
   const dollar = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -205,6 +255,24 @@ const DataList = ({ dataOrders, baseUrl }) => {
       return string.substring(0, maxLength) + "...";
     }
   }
+
+  function copyText(value) {
+    navigator.clipboard.writeText(value);
+    alert("delivery receipt copied!");
+  }
+
+  const handleClickOrderAccept = (id) => {
+    Axios.put(`${baseUrl}/api/client/acceptorder/${id}`).then((response) => {
+      if (response.data.success) {
+        getData("shipping");
+      } else if (response.data.error) {
+        alert(response.data.error);
+      } else {
+        console.log("Error Occured!");
+      }
+    });
+  };
+
   return (
     <>
       <div className="w-full pt-2 flex flex-col items-center gap-2 bg-zinc-200">
@@ -219,9 +287,17 @@ const DataList = ({ dataOrders, baseUrl }) => {
               <div className="w-full px-1 flex justify-between border-b py-1">
                 <h1 className="font-semibold truncate">{data.store_name}</h1>
                 {data.carrier ? (
-                  <p className="text-blue-500 font-semibold text-sm">
-                    {data.carrier}, {data.tracking_number}
-                  </p>
+                  <div
+                    className="flex gap-0.5 items-center"
+                    onClick={() => {
+                      copyText(data.tracking_number);
+                    }}
+                  >
+                    <p className="text-blue-500 font-semibold text-sm">
+                      {data.carrier}, {data.tracking_number}
+                    </p>
+                    <MdContentCopy />
+                  </div>
                 ) : (
                   ""
                 )}
@@ -236,7 +312,7 @@ const DataList = ({ dataOrders, baseUrl }) => {
                 </a>
                 <div className="flex-1 text-sm">
                   {StringTruncate(data.name)}
-                  <p>{data.additional_info}</p>
+                  <p className="text-xs text-zinc-600">{data.additional_info}</p>
                 </div>
                 <div>
                   <div className="text-zinc-600 text-xs">x{data.quantity}</div>
@@ -272,9 +348,147 @@ const DataList = ({ dataOrders, baseUrl }) => {
                   </span>
                 </div>
               </div>
+              <div className="flex">
+                {data.carrier ? (
+                  <div className="flex w-full justify-end items-center gap-1">
+                    <p className="text-xs">
+                      Your order already arrived? Click {">>"}
+                    </p>
+                    <button
+                      className="py-0.5 px-2 rounded-md bg-blue-500 text-white font-semibold"
+                      onClick={() => {
+                        const confirm = window.confirm(
+                          "Has your order arrived?"
+                        );
+                        if (confirm) {
+                          handleClickOrderAccept(data.order_item_id);
+                        }
+                      }}
+                    >
+                      Order Accepted
+                    </button>
+                  </div>
+                ) : (
+                  ""
+                )}
+              </div>
+              <div className="flex">
+                {data.status_oi === "completed" ? (
+                  <div className="flex w-full justify-end items-center gap-1">
+                    <button
+                      className="py-0.5 px-2 rounded-md bg-blue-500 text-white font-semibold"
+                      onClick={() =>
+                        giveStar(data.product_id, data.order_item_id)
+                      }
+                    >
+                      Give a star
+                    </button>
+                  </div>
+                ) : (
+                  ""
+                )}
+              </div>
             </div>
           ))
         )}
+      </div>
+    </>
+  );
+};
+
+const StarRate = ({
+  baseUrl,
+  username,
+  idProductRate,
+  idOrderItemRate,
+  setRatingStyle,
+  getData,
+}) => {
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      const response = await Axios.post(`${baseUrl}/api/client/rating`, {
+        rating: rating,
+        comment: comment,
+        username: username,
+        idProductRate: idProductRate,
+        idOrderItemRate: idOrderItemRate,
+      });
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      if (response.data.success) {
+        alert(response.data.success);
+      } else if (response.data.error) {
+        console.log(response.data.error);
+      } else {
+        console.log("Error occured!");
+      }
+
+      setLoading(false);
+      setRatingStyle("scale-0");
+      setRating(0);
+      setComment("");
+      getData();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleClick = (value) => {
+    setRating(value);
+  };
+
+  return (
+    <>
+      <div className="w-full py-2 rounded-md shadow bg-white flex flex-col gap-2">
+        <div className="px-2">
+          <h1 className="font-semibold">Product Name</h1>
+        </div>
+        <div
+          id="ratings"
+          className="w-full flex flex-row-reverse gap-1 justify-center"
+        >
+          {[5, 4, 3, 2, 1].map((value) => (
+            <MdStar
+              key={value}
+              id="star"
+              className={
+                value <= rating
+                  ? "text-yellow-400 text-xl"
+                  : "text-gray-400 text-xl"
+              }
+              onClick={() => handleClick(value)}
+            />
+          ))}
+        </div>
+        <div className="w-full px-2">
+          <textarea
+            name="comment"
+            id="comment"
+            className="w-full border rounded outline-none p-1 text-sm"
+            placeholder="Type comment here..."
+            onChange={(e) => {
+              setComment(e.target.value);
+            }}
+          ></textarea>
+        </div>
+        <div className="w-full px-2 flex justify-end">
+          <button
+            onClick={handleSubmit}
+            className="rounded-md w-20 h-7 flex justify-center items-center text-white bg-blue-400 font-semibold shadow shadow-black active:scale-95 duration-150"
+          >
+            {loading ? (
+              <AiOutlineLoading3Quarters className="animate-spin text-lg" />
+            ) : (
+              "Send"
+            )}
+          </button>
+        </div>
       </div>
     </>
   );

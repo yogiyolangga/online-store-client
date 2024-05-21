@@ -5,3 +5,11 @@
 body {
     font-family: "Noto Sans", sans-serif;
 }
+
+#ratings #star:hover ~ #star {
+    color: orange;
+}
+
+#ratings #star:hover {
+    color: orange;
+}

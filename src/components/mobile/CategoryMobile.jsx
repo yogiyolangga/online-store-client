@@ -154,10 +154,10 @@ const ProductList = ({ products, baseUrl }) => {
                   <div className="flex gap-1 items-center">
                     <FaStar className="text-yellow-300" />
                     <p className="text-xs text-zinc-600">
-                      {item.rating === 0 ? 4.2 : item.rating}
+                      {item.average_rating === null ? 3.2 : item.average_rating}
                     </p>
                   </div>
-                  <p className="text-zinc-600 text-xs">{item.sold}</p>
+                  <p className="text-zinc-600 text-xs">{item.total_sold}</p>
                 </div>
               </a>
             ))
