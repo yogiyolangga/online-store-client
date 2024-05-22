@@ -211,7 +211,7 @@ export const Recomendation = () => {
                     {item.average_rating === null ? 3.2 : item.average_rating}
                   </p>
                 </div>
-                <p className="text-zinc-600 text-xs">{item.total_sold}</p>
+                <p className="text-zinc-600 text-xs">{item.total_sold} sold</p>
               </div>
             </a>
           ))}

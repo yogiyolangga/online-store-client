@@ -126,9 +126,12 @@ const AccountData = ({ userLogin, userFullName, userNumber, storeStatus }) => {
           <div className="font-semibold flex-1">My Cart</div>
           <IoIosArrowForward className="text-lg" />
         </a>
-        <div className="w-full flex justify-between items-center gap-1">
+        <div
+          className="w-full flex justify-between items-center gap-1"
+          onClick={() => alert("sorry support not available yet!")}
+        >
           <FaRocketchat className="text-xl text-[#032ea1]" />
-          <div className="font-semibold flex-1">Livechat</div>
+          <div className="font-semibold flex-1">Livechat Support</div>
           <IoIosArrowForward className="text-lg" />
         </div>
         {storeStatus === false ? (

@@ -54,10 +54,10 @@ export default function CategoriesMobile() {
   return (
     <>
       <div
-        className="w-full p-2 bg-zinc-100 overflow-x-scroll"
+        className="w-full bg-zinc-100 overflow-x-scroll"
         style={{ scrollbarWidth: "none" }}
       >
-        <div className="w-fit flex items-center py-2 justify-between gap-2">
+        <div className="w-fit flex items-center py-2 justify-between gap-2 px-2">
           {categories.map((data) => (
             <div
               key={data.id_category}
@@ -74,7 +74,7 @@ export default function CategoriesMobile() {
           ))}
         </div>
       </div>
-      <div className="w-full px-2">
+      <div className="w-full">
         {loading === true ? (
           <div className="w-full flex gap-1 py-2 justify-center flex-col items-center">
             <AiOutlineLoading3Quarters className="animate-spin" />
@@ -112,7 +112,7 @@ export const ListCategory = ({ products, baseUrl, category }) => {
   return (
     <>
       <div className="w-full px-2 bg-zinc-200 pb-20">
-        <h1 className="pt-3 px-2 font-semibold">{category}</h1>
+        <h1 className="pt-3 font-semibold">{category}</h1>
         <div className="w-full flex flex-wrap justify-evenly py-3 gap-2">
           {products.map((item) => (
             <a
@@ -158,7 +158,7 @@ export const ListCategory = ({ products, baseUrl, category }) => {
                     {item.average_rating === null ? 3.2 : item.average_rating}
                   </p>
                 </div>
-                <p className="text-zinc-600 text-xs">{item.total_sold}</p>
+                <p className="text-zinc-600 text-xs">{item.total_sold} sold</p>
               </div>
             </a>
           ))}

@@ -7,12 +7,14 @@ import {
 } from "react-icons/pi";
 import { IoCloudDoneOutline } from "react-icons/io5";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { ImCancelCircle } from "react-icons/im";
 import { LuHistory } from "react-icons/lu";
 import { MdStar } from "react-icons/md";
 import { MdContentCopy } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Axios from "axios";
+import { StringTruncate } from "../utils";
 
 export default function Orders() {
   const navigate = useNavigate();
@@ -26,6 +28,7 @@ export default function Orders() {
   const [ratingStyle, setRatingStyle] = useState("scale-0");
   const [idProductRate, setIdProductRate] = useState("");
   const [idOrderItemRate, setIdOrderItemRate] = useState("");
+  const [productStarName, setProductStarName] = useState("");
 
   // const getData = () => {
   //   setTimeout(() => {
@@ -121,10 +124,11 @@ export default function Orders() {
     setLoading(true);
   };
 
-  const giveStar = (id_product, order_item_id) => {
+  const giveStar = (id_product, order_item_id, name_product) => {
     setRatingStyle("scale-100");
     setIdProductRate(id_product);
     setIdOrderItemRate(order_item_id);
+    setProductStarName(name_product);
   };
 
   return (
@@ -234,6 +238,7 @@ export default function Orders() {
             setRatingStyle={setRatingStyle}
             getData={getData}
             setStatus={setStatus}
+            productStarName={productStarName}
           />
         </div>
       </div>
@@ -247,14 +252,6 @@ const DataList = ({ dataOrders, baseUrl, getData, giveStar }) => {
     currency: "USD",
     minimumFractionDigits: 2,
   });
-
-  function StringTruncate(string, maxLength = 25) {
-    if (string.length <= maxLength) {
-      return string;
-    } else {
-      return string.substring(0, maxLength) + "...";
-    }
-  }
 
   function copyText(value) {
     navigator.clipboard.writeText(value);
@@ -312,7 +309,9 @@ const DataList = ({ dataOrders, baseUrl, getData, giveStar }) => {
                 </a>
                 <div className="flex-1 text-sm">
                   {StringTruncate(data.name)}
-                  <p className="text-xs text-zinc-600">{data.additional_info}</p>
+                  <p className="text-xs text-zinc-600">
+                    {data.additional_info}
+                  </p>
                 </div>
                 <div>
                   <div className="text-zinc-600 text-xs">x{data.quantity}</div>
@@ -378,7 +377,7 @@ const DataList = ({ dataOrders, baseUrl, getData, giveStar }) => {
                     <button
                       className="py-0.5 px-2 rounded-md bg-blue-500 text-white font-semibold"
                       onClick={() =>
-                        giveStar(data.product_id, data.order_item_id)
+                        giveStar(data.product_id, data.order_item_id, data.name)
                       }
                     >
                       Give a star
@@ -403,6 +402,7 @@ const StarRate = ({
   idOrderItemRate,
   setRatingStyle,
   getData,
+  productStarName,
 }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -446,8 +446,9 @@ const StarRate = ({
   return (
     <>
       <div className="w-full py-2 rounded-md shadow bg-white flex flex-col gap-2">
-        <div className="px-2">
-          <h1 className="font-semibold">Product Name</h1>
+        <div className="px-2 w-full flex justify-between">
+          <h1 className="font-semibold">{StringTruncate(productStarName)}</h1>
+          <ImCancelCircle onClick={() => setRatingStyle("scale-0")} />
         </div>
         <div
           id="ratings"
