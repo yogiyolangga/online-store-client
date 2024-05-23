@@ -57,7 +57,7 @@ export default function CategoriesMobile() {
         className="w-full bg-zinc-100 overflow-x-scroll"
         style={{ scrollbarWidth: "none" }}
       >
-        <div className="w-fit flex items-center py-2 justify-between gap-2 px-2">
+        <div className="w-fit flex items-center cursor-pointer py-2 justify-between gap-2 px-2">
           {categories.map((data) => (
             <div
               key={data.id_category}

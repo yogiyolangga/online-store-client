@@ -127,7 +127,7 @@ const AccountData = ({ userLogin, userFullName, userNumber, storeStatus }) => {
           <IoIosArrowForward className="text-lg" />
         </a>
         <div
-          className="w-full flex justify-between items-center gap-1"
+          className="w-full flex justify-between items-center gap-1 cursor-pointer"
           onClick={() => alert("sorry support not available yet!")}
         >
           <FaRocketchat className="text-xl text-[#032ea1]" />
@@ -164,7 +164,7 @@ const AccountData = ({ userLogin, userFullName, userNumber, storeStatus }) => {
           <IoIosArrowForward className="text-lg" />
         </div>
         <div
-          className="w-full flex justify-between items-center gap-1"
+          className="w-full flex justify-between items-center gap-1 cursor-pointer"
           onClick={handleLogout}
         >
           <RiLogoutBoxRLine className="text-xl text-[#032ea1]" />

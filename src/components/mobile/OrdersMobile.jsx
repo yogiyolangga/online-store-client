@@ -152,7 +152,7 @@ export default function Orders() {
         </div>
         <div className="w-full py-2 flex justify-evenly border-b">
           <div
-            className="flex flex-col items-center"
+            className="flex flex-col items-center cursor-pointer"
             onClick={handleClickPending}
           >
             <PiWalletDuotone
@@ -163,7 +163,7 @@ export default function Orders() {
             <span className="text-xs">Not yet paid</span>
           </div>
           <div
-            className="flex flex-col items-center"
+            className="flex flex-col items-center cursor-pointer"
             onClick={handleClickPackaged}
           >
             <PiPackageDuotone
@@ -174,7 +174,7 @@ export default function Orders() {
             <span className="text-xs">Packaged</span>
           </div>
           <div
-            className="flex flex-col items-center"
+            className="flex flex-col items-center cursor-pointer"
             onClick={handleClickShipping}
           >
             <PiAirplaneTiltDuotone
@@ -185,7 +185,7 @@ export default function Orders() {
             <span className="text-xs">Shipping</span>
           </div>
           <div
-            className="flex flex-col items-center"
+            className="flex flex-col items-center cursor-pointer" 
             onClick={handleClickCompleted}
           >
             <IoCloudDoneOutline
@@ -196,7 +196,7 @@ export default function Orders() {
             <span className="text-xs">Finished</span>
           </div>
           <div
-            className="flex flex-col items-center"
+            className="flex flex-col items-center cursor-pointer"
             onClick={handleClickHistory}
           >
             <LuHistory
