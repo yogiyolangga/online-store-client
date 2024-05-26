@@ -1,13 +1,15 @@
 import { IoSearch } from "react-icons/io5";
 import { FaStar } from "react-icons/fa6";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { Carousel } from "react-responsive-carousel";
 import { jwtDecode } from "jwt-decode";
 import Axios from "axios";
-
-import { BannersImgSlider } from "../sampleContent";
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import React, { useRef, useEffect, useState } from "react";
+import {
+  MdOutlineArrowCircleLeft,
+  MdOutlineArrowCircleRight,
+} from "react-icons/md";
+import { RxDotFilled } from "react-icons/rx";
 
 export default function HomeMobile() {
   const token = localStorage.getItem("accessToken");
@@ -19,9 +21,9 @@ export default function HomeMobile() {
   }
   return (
     <>
-      <div className="bg-zinc-200 flex flex-col gap-2">
+      <div className="bg-zinc-200 flex flex-col">
         <SearchBar />
-        <BannerSlider />
+        <Carousel />
         <Categories />
         <Recomendation />
       </div>
@@ -61,19 +63,138 @@ export const SearchBar = () => {
   );
 };
 
-const BannerSlider = () => {
+const Carousel = () => {
+  const apiUrl = "http://localhost:3000";
+  const [baners, setBaners] = useState([]);
+  const carouselRef = useRef(null);
+  const [isDragStart, setIsDragStart] = useState(false);
+  const [prevPageX, setPrevPageX] = useState(0);
+  const [prevScrollLeft, setPrevScrollLeft] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const getData = () => {
+    Axios.get(`${apiUrl}/admin/banner`).then((response) => {
+      if (response.data.error) {
+        console.log(response.data.error);
+      } else if (response.data.success) {
+        setBaners(response.data.result);
+      } else {
+        console.log("Errorrr");
+      }
+    });
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  useEffect(() => {
+    const carousel = carouselRef.current;
+
+    const dragStart = (e) => {
+      setIsDragStart(true);
+      setPrevPageX(e.pageX || e.touches[0].pageX);
+      setPrevScrollLeft(carousel.scrollLeft);
+      setIsDragging(false); // Reset dragging state
+    };
+
+    const dragging = (e) => {
+      if (!isDragStart) return;
+      e.preventDefault();
+      setIsDragging(true);
+      const positionDiff = (e.pageX || e.touches[0].pageX) - prevPageX;
+      carousel.scrollLeft = prevScrollLeft - positionDiff;
+    };
+
+    const dragStop = () => {
+      setIsDragStart(false);
+      if (isDragging) {
+        autoScroll();
+      }
+    };
+
+    const autoScroll = () => {
+      const firstImgWidth = carousel.querySelector("img").clientWidth;
+      const scrollLeft = carousel.scrollLeft;
+      const index = Math.round(scrollLeft / firstImgWidth);
+      carousel.scrollTo({
+        left: index * firstImgWidth,
+        behavior: "smooth",
+      });
+    };
+
+    carousel.addEventListener("mousedown", dragStart);
+    carousel.addEventListener("mousemove", dragging);
+    carousel.addEventListener("mouseup", dragStop);
+    carousel.addEventListener("mouseleave", dragStop);
+    carousel.addEventListener("touchstart", dragStart);
+    carousel.addEventListener("touchmove", dragging);
+    carousel.addEventListener("touchend", dragStop);
+
+    return () => {
+      carousel.removeEventListener("mousedown", dragStart);
+      carousel.removeEventListener("mousemove", dragging);
+      carousel.removeEventListener("mouseup", dragStop);
+      carousel.removeEventListener("mouseleave", dragStop);
+      carousel.removeEventListener("touchstart", dragStart);
+      carousel.removeEventListener("touchmove", dragging);
+      carousel.removeEventListener("touchend", dragStop);
+    };
+  }, [isDragStart, isDragging, prevPageX, prevScrollLeft]);
+
+  const handleImageClick = (url) => {
+    if (!isDragging) {
+      window.open(url, "_blank");
+    }
+  };
+
+  const slideLeft = () => {
+    const carousel = carouselRef.current;
+    const firstImgWidth = carousel.querySelector("img").clientWidth;
+    carousel.scrollBy({
+      left: -firstImgWidth,
+      behavior: "smooth",
+    });
+  };
+
+  const slideRight = () => {
+    const carousel = carouselRef.current;
+    const firstImgWidth = carousel.querySelector("img").clientWidth;
+    carousel.scrollBy({
+      left: firstImgWidth,
+      behavior: "smooth",
+    });
+  };
+
   return (
-    <>
-      <div className="rounded-xl">
-        <Carousel showThumbs={false} showStatus={false}>
-          {BannersImgSlider.map((url) => (
-            <a href="/" key={url.url}>
-              <img src={url.url} />
-            </a>
-          ))}
-        </Carousel>
+    <div className="relative flex items-center justify-center">
+      <button
+        className="absolute bg-zinc-200 p-1 left-0 bg-opacity-60 rounded-full"
+        onClick={slideLeft}
+      >
+        <MdOutlineArrowCircleLeft className="text-xl" />
+      </button>
+      <button
+        className="absolute right-0 bg-zinc-200 p-1 bg-opacity-60 rounded-full"
+        onClick={slideRight}
+      >
+        <MdOutlineArrowCircleRight className="text-xl" />
+      </button>
+      <div
+        ref={carouselRef}
+        id="carousel"
+        className="flex overflow-x-scroll scrollbar-hide"
+      >
+        {baners.map((img) => (
+          <img
+            key={img.id_baner}
+            src={img.url_image}
+            alt={img.title}
+            onClick={() => handleImageClick(img.link)}
+          />
+        ))}
       </div>
-    </>
+    </div>
   );
 };
 
