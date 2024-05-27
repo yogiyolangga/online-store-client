@@ -287,7 +287,7 @@ export const Recomendation = () => {
         <div className="w-full flex items-center rounded-md bg-white px-2 py-2">
           <h2 className="text-lg font-semibold text-zinc-600">Recomendation</h2>
         </div>
-        <div className="w-full flex flex-wrap justify-evenly py-3 gap-2">
+        <div className="w-full flex flex-wrap justify-between py-3 gap-2">
           {productsList.map((item) => (
             <a
               href={`/product/${item.id_product}`}
