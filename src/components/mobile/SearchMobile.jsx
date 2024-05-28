@@ -8,7 +8,7 @@ import { FaStar } from "react-icons/fa6";
 export default function Search() {
   const [productsList, setProductList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const baseUrl = "http://localhost:3000";
+  const baseUrl = import.meta.env.VITE_API_URL;
   const location = useLocation();
 
   useEffect(() => {

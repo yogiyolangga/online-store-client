@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 export default function OrderComplete() {
   const [dataOrder, setDataOrder] = useState([]);
   const navigate = useNavigate();
-  const baseUrl = "http://localhost:3000";
+  const baseUrl = import.meta.env.VITE_API_URL;
   const userLogin = localStorage.getItem("username");
 
   const getData = () => {

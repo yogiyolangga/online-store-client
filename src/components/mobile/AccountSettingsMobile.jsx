@@ -14,7 +14,7 @@ export default function AccountSettingsMobile() {
   const [userBirthday, setUserBirthday] = useState(null);
   const userLogin = localStorage.getItem("username");
   const token = localStorage.getItem("accessToken");
-  const baseUrl = "http://localhost:3000";
+  const baseUrl = import.meta.env.VITE_API_URL;
   const [showName, setShowName] = useState("translate-x-[100%]");
   const [showNumber, setShowNumber] = useState("translate-x-[100%]");
   const [showEmail, setShowEmail] = useState("translate-x-[100%]");

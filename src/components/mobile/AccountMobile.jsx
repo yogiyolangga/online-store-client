@@ -19,7 +19,7 @@ export default function AccountMobile() {
   const [userNumber, setUserNumber] = useState("");
   const userLogin = localStorage.getItem("username");
   const token = localStorage.getItem("accessToken");
-  const baseUrl = "http://localhost:3000";
+  const baseUrl = import.meta.env.VITE_API_URL;
   const [storeStatus, setStoreStatus] = useState(true);
 
   const getData = () => {

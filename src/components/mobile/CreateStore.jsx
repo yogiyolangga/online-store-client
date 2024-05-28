@@ -10,7 +10,7 @@ export default function CreateStore() {
   const [storeName, setStoreName] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
-  const baseUrl = "http://localhost:3000";
+  const baseUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     if (!token) {

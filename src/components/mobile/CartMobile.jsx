@@ -3,7 +3,6 @@ import { FaPlus } from "react-icons/fa6";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import Axios from "axios";
 import { useEffect, useState } from "react";
-import { ListCategory } from "./CategoriesMobile";
 import { FiMapPin } from "react-icons/fi";
 import { PiNotepad } from "react-icons/pi";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +16,7 @@ export default function CartMobile() {
   const [cartItems, setCartItems] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [subTotalPrice, setSubTotalPrice] = useState(0);
-  const baseUrl = "http://localhost:3000";
+  const baseUrl = import.meta.env.VITE_API_URL;
   const [checkoutPosition, setCheckoutPosition] =
     useState("translate-y-[100%]");
 
@@ -63,7 +62,7 @@ export default function CartMobile() {
     <>
       <div className="w-full bg-zinc-200 relative">
         <div className="p-2">
-          {loginStatus === true ? (
+          {loginStatus ? (
             <ShoppingCart
               userLogin={userLogin}
               setCheckoutPosition={setCheckoutPosition}
@@ -324,7 +323,7 @@ const Checkout = ({
   };
 
   const getPyMethod = () => {
-    Axios.get(`${baseUrl}/api/admin/bank`).then((response) => {
+    Axios.get(`${baseUrl}/api/client/bankpayment`).then((response) => {
       if (response.data.error) {
         console.log(response.data.error);
       } else if (response.data.success) {
@@ -376,7 +375,7 @@ const Checkout = ({
           console.log(response.data.error);
         } else if (response.data.pending) {
           alert(response.data.pending);
-          navigate('/payment')
+          navigate("/payment");
         } else {
           console.log("Error, try again later!");
         }

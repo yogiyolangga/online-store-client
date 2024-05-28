@@ -4,6 +4,7 @@ import { PiEyeSlashThin } from "react-icons/pi";
 import { SlEye } from "react-icons/sl";
 import Axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { ImSpinner2 } from "react-icons/im";
 
 export default function RegisterMobile() {
   return (
@@ -23,7 +24,7 @@ export default function RegisterMobile() {
 }
 
 const FormRegis = () => {
-  const baseUrl = "http://localhost:3000";
+  const baseUrl = import.meta.env.VITE_API_URL;
   const [fullname, setFullname] = useState("");
   const [username, setUsername] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -36,6 +37,8 @@ const FormRegis = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [loading, setLoading] = useState(false);
 
   const handleShowPassword = () => {
     setShowPassword(true);
@@ -107,6 +110,7 @@ const FormRegis = () => {
     const isValid = validationRegisterForm();
 
     if (isValid) {
+      setLoading(true);
       try {
         const response = await Axios.post(`${baseUrl}/api/client/register`, {
           fullname: fullname,
@@ -116,14 +120,18 @@ const FormRegis = () => {
           password: password,
         });
 
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
         if (response.data.errorValidation) {
           setRegisterInfo(response.data.errorValidation);
         } else if (response.data.success) {
           alert(response.data.success);
-          navigate("/login")
+          navigate("/login");
         } else {
           setRegisterInfo("Server might error!");
         }
+
+        setLoading(false);
       } catch (error) {
         console.error(error);
         setRegisterInfo("Server error occurred!");
@@ -248,10 +256,14 @@ const FormRegis = () => {
         </p>
         <div className="w-full">
           <button
-            className="w-full rounded-3xl bg-[#032ea1] shadow shadow-black font-semibold py-2 text-white active:scale-95 duration-75"
+            className="w-full h-10 rounded-3xl bg-[#032ea1] shadow shadow-black font-semibold py-2 text-white active:scale-95 duration-75 flex justify-center items-center"
             onClick={onSubmitForm}
           >
-            Sign Up
+            {loading ? (
+              <ImSpinner2 className="text-lg animate-spin" />
+            ) : (
+              <p>Sign Up</p>
+            )}
           </button>
         </div>
         <div>

@@ -8,7 +8,7 @@ export default function AddressMobile() {
   const [address, setAddress] = useState("");
   const token = localStorage.getItem("accessToken");
   const userLogin = localStorage.getItem("username");
-  const baseUrl = "http://localhost:3000";
+  const baseUrl = import.meta.env.VITE_API_URL;
 
   const fetchAddress = () => {
     Axios.get(`${baseUrl}/api/client/address/${userLogin}`).then((response) => {

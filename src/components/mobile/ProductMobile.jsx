@@ -12,7 +12,7 @@ export default function ProductMobile() {
   const userLogin = localStorage.getItem("username");
   const navigate = useNavigate();
   const [cartLength, setCartLength] = useState(0);
-  const baseUrl = "http://localhost:3000";
+  const baseUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     Axios.get(`${baseUrl}/api/client/getcart/${userLogin}`).then((response) => {
@@ -158,7 +158,7 @@ const ProductData = ({ baseUrl }) => {
 
 const Recomendation = () => {
   const [productsList, setProductsList] = useState([]);
-  const baseUrl = "http://localhost:3000";
+  const baseUrl = import.meta.env.VITE_API_URL;
 
   const dollar = new Intl.NumberFormat("en-US", {
     style: "currency",

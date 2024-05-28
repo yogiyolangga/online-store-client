@@ -18,7 +18,7 @@ import { StringTruncate } from "../utils";
 
 export default function Orders() {
   const navigate = useNavigate();
-  const baseUrl = "http://localhost:3000";
+  const baseUrl = import.meta.env.VITE_API_URL;
   const [dataOrders, setDataOrders] = useState([]);
   const [menu, setMenu] = useState("pending");
   const username = localStorage.getItem("username");

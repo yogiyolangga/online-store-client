@@ -5,7 +5,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 export default function CategoriesMobile() {
   const [categories, setCategories] = useState([]);
-  const baseUrl = "http://localhost:3000";
+  const baseUrl = import.meta.env.VITE_API_URL;
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const [category, setCategory] = useState("");

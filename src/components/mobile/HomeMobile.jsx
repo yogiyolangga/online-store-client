@@ -9,19 +9,21 @@ import {
   MdOutlineArrowCircleLeft,
   MdOutlineArrowCircleRight,
 } from "react-icons/md";
-import { RxDotFilled } from "react-icons/rx";
+import { dollar } from "../utils";
 
 export default function HomeMobile() {
   const token = localStorage.getItem("accessToken");
   const username = localStorage.getItem("username");
+
   if (token) {
     const decodeToken = jwtDecode(token);
   } else {
     console.log("Please Sign In/Sign Up!");
   }
+
   return (
     <>
-      <div className="bg-zinc-200 flex flex-col">
+      <div className="bg-zinc-200 flex flex-col relative">
         <SearchBar />
         <Carousel />
         <Categories />
@@ -64,16 +66,22 @@ export const SearchBar = () => {
 };
 
 const Carousel = () => {
-  const apiUrl = "http://localhost:3000";
+  const apiUrl = import.meta.env.VITE_API_URL;
   const [baners, setBaners] = useState([]);
   const carouselRef = useRef(null);
   const [isDragStart, setIsDragStart] = useState(false);
   const [prevPageX, setPrevPageX] = useState(0);
   const [prevScrollLeft, setPrevScrollLeft] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const getData = () => {
-    Axios.get(`${apiUrl}/admin/banner`).then((response) => {
+  const getData = async () => {
+    setLoading(true);
+    try {
+      const response = await Axios.get(`${apiUrl}/admin/banner`);
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       if (response.data.error) {
         console.log(response.data.error);
       } else if (response.data.success) {
@@ -81,7 +89,11 @@ const Carousel = () => {
       } else {
         console.log("Errorrr");
       }
-    });
+
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -185,14 +197,18 @@ const Carousel = () => {
         id="carousel"
         className="flex overflow-x-scroll scrollbar-hide"
       >
-        {baners.map((img) => (
-          <img
-            key={img.id_baner}
-            src={img.url_image}
-            alt={img.title}
-            onClick={() => handleImageClick(img.link)}
-          />
-        ))}
+        {loading ? (
+          <div>loading...</div>
+        ) : (
+          baners.map((img) => (
+            <img
+              key={img.id_baner}
+              src={img.url_image}
+              alt={img.title}
+              onClick={() => handleImageClick(img.link)}
+            />
+          ))
+        )}
       </div>
     </div>
   );
@@ -200,7 +216,7 @@ const Carousel = () => {
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
-  const baseUrl = "http://localhost:3000";
+  const baseUrl = import.meta.env.VITE_API_URL;
 
   const getCategories = () => {
     Axios.get(`${baseUrl}/api/admin/categories`).then((response) => {
@@ -249,16 +265,17 @@ const Categories = () => {
 
 export const Recomendation = () => {
   const [productsList, setProductsList] = useState([]);
-  const baseUrl = "http://localhost:3000";
+  const baseUrl = import.meta.env.VITE_API_URL;
+  const [loading, setLoading] = useState(false);
 
-  const dollar = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  });
+  const getProducts = async () => {
+    setLoading(true);
 
-  const getProducts = () => {
-    Axios.get(`${baseUrl}/api/client/products`).then((response) => {
+    try {
+      const response = await Axios.get(`${baseUrl}/api/client/products`);
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       if (response.data.success) {
         setProductsList(response.data.result);
       } else if (response.data.error) {
@@ -266,7 +283,11 @@ export const Recomendation = () => {
       } else {
         console.log("Server running Error!");
       }
-    });
+
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -283,65 +304,85 @@ export const Recomendation = () => {
 
   return (
     <>
-      <div className="w-full px-2 pb-20">
-        <div className="w-full flex items-center rounded-md bg-white px-2 py-2">
-          <h2 className="text-lg font-semibold text-zinc-600">Recomendation</h2>
-        </div>
-        <div className="w-full flex flex-wrap justify-between py-3 gap-2">
-          {productsList.map((item) => (
-            <a
-              href={`/product/${item.id_product}`}
-              key={item.id_product}
-              className="w-[48%] py-1 flex flex-col gap-1 bg-white rounded-md shadow pb-2"
-            >
-              <div className="h-[160px]">
-                <img
-                  src={`${baseUrl}/${item.img}`}
-                  alt={item.name}
-                  className="w-full"
-                />
-              </div>
-              <div className="w-full px-1 flex flex-col">
-                <p className="font-semibold text-sm">
-                  {truncateTitle(item.name)}
-                </p>
-                <div className="w-full flex justify-between">
-                  <p className="font-bold text-[#e00025]">
-                    {dollar.format(
-                      item.price - item.price * (item.discount / 100)
-                    )}
+      {loading ? (
+        <Loading />
+      ) : (
+        <div className="w-full px-2 pb-20">
+          <div className="w-full flex items-center rounded-md bg-white px-2 py-2">
+            <h2 className="text-lg font-semibold text-zinc-600">
+              Recomendation
+            </h2>
+          </div>
+          <div className="w-full flex flex-wrap justify-between py-3 gap-2">
+            {productsList.map((item) => (
+              <a
+                href={`/product/${item.id_product}`}
+                key={item.id_product}
+                className="w-[48%] py-1 flex flex-col gap-1 bg-white rounded-md shadow pb-2"
+              >
+                <div className="h-[160px]">
+                  <img
+                    src={`${baseUrl}/${item.img}`}
+                    alt={item.name}
+                    className="w-full"
+                  />
+                </div>
+                <div className="w-full px-1 flex flex-col">
+                  <p className="font-semibold text-sm">
+                    {truncateTitle(item.name)}
                   </p>
-                  <p className="text-xs text-blue-500">
-                    {item.discount < 1 ? "" : `save ${item.discount}%`}
+                  <div className="w-full flex justify-between">
+                    <p className="font-bold text-[#e00025]">
+                      {dollar.format(
+                        item.price - item.price * (item.discount / 100)
+                      )}
+                    </p>
+                    <p className="text-xs text-blue-500">
+                      {item.discount < 1 ? "" : `save ${item.discount}%`}
+                    </p>
+                  </div>
+                  <p
+                    className={
+                      item.discount < 1
+                        ? "hidden"
+                        : "text-zinc-600 font-light text-sm line-through"
+                    }
+                  >
+                    {dollar.format(item.price)}
                   </p>
                 </div>
-                <p
-                  className={
-                    item.discount < 1
-                      ? "hidden"
-                      : "text-zinc-600 font-light text-sm line-through"
-                  }
-                >
-                  {dollar.format(item.price)}
-                </p>
-              </div>
-              <div className="w-full flex justify-between px-1">
-                <div className="flex gap-1 items-center">
-                  <FaStar className="text-yellow-300" />
-                  <p className="text-xs text-zinc-600">
-                    {item.average_rating === null ? 3.2 : item.average_rating}
+                <div className="w-full flex justify-between px-1">
+                  <div className="flex gap-1 items-center">
+                    <FaStar className="text-yellow-300" />
+                    <p className="text-xs text-zinc-600">
+                      {item.average_rating === null ? 3.2 : item.average_rating}
+                    </p>
+                  </div>
+                  <p className="text-zinc-600 text-xs">
+                    {item.total_sold} sold
                   </p>
                 </div>
-                <p className="text-zinc-600 text-xs">{item.total_sold} sold</p>
-              </div>
-            </a>
-          ))}
+              </a>
+            ))}
+          </div>
+          <div className="w-full py-4 flex justify-center">
+            <button className="py-2 px-4 rounded shadow bg-zinc-50">
+              Load More
+            </button>
+          </div>
         </div>
-        <div className="w-full py-4 flex justify-center">
-          <button className="py-2 px-4 rounded shadow bg-zinc-50">
-            Load More
-          </button>
-        </div>
+      )}
+    </>
+  );
+};
+
+export const Loading = () => {
+  return (
+    <>
+      <div className="absolute z-20 w-full min-h-screen bg-zinc-600 bg-opacity-60 backdrop-blur flex justify-center items-center">
+        <h1 className="font-semibold text-zinc-100 animate-pulse">
+          Loading...
+        </h1>
       </div>
     </>
   );

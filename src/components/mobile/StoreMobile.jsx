@@ -13,7 +13,7 @@ export default function StoreMobile() {
   const [productList, setProductList] = useState([]);
   const [detailsProduct, setDetailsProduct] = useState([]);
   const [detailsDisplay, setDetailsDisplay] = useState("translate-x-[100%]");
-  const baseUrl = "http://localhost:3000";
+  const baseUrl = import.meta.env.VITE_API_URL;
   const userLogin = localStorage.getItem("username");
   const token = localStorage.getItem("accessToken");
   const navigate = useNavigate();
@@ -303,7 +303,7 @@ const ProductDetails = ({ detailsProduct, goBack }) => {
   const [price, setPrice] = useState(0);
   const [stock, setStock] = useState(0);
   const [discount, setDiscount] = useState(0);
-  const baseUrl = "http://localhost:3000";
+  const baseUrl = import.meta.env.VITE_API_URL;
 
   const handleChangeImage = (e) => {
     const file = e.target.files[0];

@@ -3,6 +3,7 @@ import { CiUser, CiLock } from "react-icons/ci";
 import { PiEyeSlashThin } from "react-icons/pi";
 import { SlEye } from "react-icons/sl";
 import { useNavigate } from "react-router-dom";
+import { ImSpinner2 } from "react-icons/im";
 import Axios from "axios";
 
 export default function LoginUserMobile() {
@@ -29,7 +30,8 @@ const FormLogin = () => {
   const [loginStatus, setLoginStatus] = useState(false);
   const [loginInvalid, setLoginInvalid] = useState("");
   const navigate = useNavigate();
-  const baseUrl = "http://localhost:3000";
+  const [loading, setLoading] = useState(false);
+  const baseUrl = import.meta.env.VITE_API_URL;
 
   const handleShowPassword = () => {
     setShowPassword(true);
@@ -39,30 +41,34 @@ const FormLogin = () => {
     setShowPassword(false);
   };
 
-  const loginSubmit = () => {
-    Axios.post(`${baseUrl}/api/client/login`, {
-      username: username,
-      password: password,
-    })
-      .then((response) => {
-        if (
-          response.status === 200 &&
-          response.data.success === "Login successfully"
-        ) {
-          setLoginStatus(true);
-          setLoginInvalid("");
-          localStorage.setItem("accessToken", response.data.token);
-          localStorage.setItem("username", response.data.username);
-          navigate("/")
-        } else {
-          setLoginInvalid(response.data.error);
-        }
-      })
-      .catch((error) => {
-        if (error) {
-          alert("Error occured");
-        }
+  const loginSubmit = async () => {
+    setLoading(true);
+
+    try {
+      const response = await Axios.post(`${baseUrl}/api/client/login`, {
+        username: username,
+        password: password,
       });
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      if (
+        response.status === 200 &&
+        response.data.success === "Login successfully"
+      ) {
+        setLoginStatus(true);
+        setLoginInvalid("");
+        localStorage.setItem("accessToken", response.data.token);
+        localStorage.setItem("username", response.data.username);
+        navigate("/");
+      } else {
+        setLoginInvalid(response.data.error);
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const isLoggedIn = () => {
@@ -121,10 +127,14 @@ const FormLogin = () => {
         </div>
         <div className="w-full">
           <button
-            className="w-full rounded-3xl bg-[#032ea1] shadow shadow-black font-semibold py-2 text-white active:scale-95 duration-75"
+            className="w-full h-10 rounded-3xl bg-[#032ea1] shadow shadow-black font-semibold py-2 text-white active:scale-95 duration-75 flex justify-center items-center"
             onClick={loginSubmit}
           >
-            Sign In
+            {loading ? (
+              <ImSpinner2 className="text-lg animate-spin" />
+            ) : (
+              <p>Sign In</p>
+            )}
           </button>
         </div>
         <div>
