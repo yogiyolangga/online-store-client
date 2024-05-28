@@ -257,7 +257,6 @@ const Recomendation = () => {
 const OptionProduct = ({ setPositionOption, idProduct, baseUrl }) => {
   const [quantity, setQuantity] = useState(1);
   const userLogin = localStorage.getItem("username");
-  const today = new Date();
   const [addInfo, setAddInfo] = useState("");
   const navigate = useNavigate();
 
@@ -267,7 +266,6 @@ const OptionProduct = ({ setPositionOption, idProduct, baseUrl }) => {
         idProduct: idProduct.id,
         userLogin: userLogin,
         quantity: quantity,
-        today: today,
         addInfo: addInfo,
       }).then((response) => {
         if (response.data.success) {
