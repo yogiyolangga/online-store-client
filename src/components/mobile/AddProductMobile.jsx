@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { IoArrowUndo } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
+import { ImSpinner2 } from "react-icons/im";
 
 export default function AddProductMobile() {
   const navigate = useNavigate();
@@ -32,50 +33,60 @@ const ProductForm = ({ userLogin, baseUrl }) => {
   const [stock, setStock] = useState(0);
   const [discount, setDiscount] = useState(0);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleChangeImage = (e) => {
     const file = e.target.files[0];
     setImage(file);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
 
-    // Validation
-    if (name === "") {
-      return alert("Please input product name!");
-    } else if (image === null) {
-      return alert("Please add image product!");
-    } else if (category === "") {
-      return alert("Please select category product!");
-    } else if (description.length < 10) {
-      return alert("Please add more description product!");
-    } else if (price < 1) {
-      return alert("Product price at least 1$");
-    } else if (stock < 1) {
-      return alert("Stock product minimal 1");
-    }
+    try {
+      // Validation
+      if (name === "") {
+        return alert("Please input product name!");
+      } else if (image === null) {
+        return alert("Please add image product!");
+      } else if (category === "") {
+        return alert("Please select category product!");
+      } else if (description.length < 10) {
+        return alert("Please add more description product!");
+      } else if (price < 1) {
+        return alert("Product price at least 1$");
+      } else if (stock < 1) {
+        return alert("Stock product minimal 1");
+      }
 
-    const fd = new FormData();
-    fd.append("image", image);
-    fd.append("userLogin", userLogin);
-    fd.append("name", name);
-    fd.append("category", category);
-    fd.append("description", description);
-    fd.append("price", price);
-    fd.append("stock", stock);
-    fd.append("discount", discount);
+      const fd = new FormData();
+      fd.append("image", image);
+      fd.append("userLogin", userLogin);
+      fd.append("name", name);
+      fd.append("category", category);
+      fd.append("description", description);
+      fd.append("price", price);
+      fd.append("stock", stock);
+      fd.append("discount", discount);
 
-    Axios.post(`${baseUrl}/api/client/addproduct`, fd).then((response) => {
+      const response = await Axios.post(`${baseUrl}/api/client/addproduct`, fd);
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       if (response.data.success) {
         alert(response.data.success);
-        navigate("/account/store")
+        navigate("/account/store");
       } else if (response.data.error) {
         alert(response.data.error);
       } else {
         alert("Server error");
       }
-    });
+
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const getCategory = () => {
@@ -138,7 +149,7 @@ const ProductForm = ({ userLogin, baseUrl }) => {
           </div>
           <div className="bg-zinc-200 py-1 px-2 rounded-md border border-zinc-600">
             <input
-              type="text"
+              type="number"
               placeholder="Price Product in $"
               className="py-1 bg-zinc-200 w-full outline-none"
               onChange={(e) => {
@@ -158,7 +169,7 @@ const ProductForm = ({ userLogin, baseUrl }) => {
           </div>
           <div className="bg-zinc-200 py-1 px-2 rounded-md border border-zinc-600">
             <input
-              type="text"
+              type="number"
               placeholder="Discount Product % (optional)"
               className="py-1 bg-zinc-200 w-full outline-none"
               onChange={(e) => {
@@ -183,10 +194,14 @@ const ProductForm = ({ userLogin, baseUrl }) => {
           </div>
           <div className="w-full py-1">
             <button
-              className="w-full py-2 bg-[#032ea1] rounded-md text-white font-semibold"
+              className="w-full h-10 rounded-3xl bg-[#032ea1] shadow shadow-black font-semibold py-2 text-white active:scale-95 duration-75 flex justify-center items-center"
               type="submit"
             >
-              Save
+              {loading ? (
+                <ImSpinner2 className="text-lg animate-spin" />
+              ) : (
+                <p>Submit</p>
+              )}
             </button>
           </div>
         </div>

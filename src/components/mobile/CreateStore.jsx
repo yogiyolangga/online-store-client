@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { IoArrowUndo } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
+import { ImSpinner2 } from "react-icons/im";
 
 export default function CreateStore() {
   const navigate = useNavigate();
@@ -9,8 +10,11 @@ export default function CreateStore() {
   const userLogin = localStorage.getItem("username");
   const [storeName, setStoreName] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
+  const [address, setAddress] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const baseUrl = import.meta.env.VITE_API_URL;
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!token) {
@@ -18,13 +22,20 @@ export default function CreateStore() {
     }
   });
 
-  const createStore = () => {
-    Axios.post(`${baseUrl}/api/client/createstore`, {
-      username: userLogin,
-      storeName: storeName,
-      description: description,
-      category: category,
-    }).then((response) => {
+  const createStore = async () => {
+    setLoading(true);
+    try {
+      const response = await Axios.post(`${baseUrl}/api/client/createstore`, {
+        username: userLogin,
+        storeName: storeName,
+        description: description,
+        address: address,
+        phone: phone,
+        email: email,
+      });
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       if (response.data.success) {
         alert(response.data.success);
         navigate("/account");
@@ -33,7 +44,11 @@ export default function CreateStore() {
       } else {
         alert("Server Error! Try Again Later");
       }
-    });
+
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -51,8 +66,11 @@ export default function CreateStore() {
           <FormDataStore
             setStoreName={setStoreName}
             setDescription={setDescription}
-            setCategory={setCategory}
+            setAddress={setAddress}
+            setEmail={setEmail}
+            setPhone={setPhone}
             createStore={createStore}
+            loading={loading}
           />
         </div>
       </div>
@@ -63,8 +81,11 @@ export default function CreateStore() {
 const FormDataStore = ({
   setStoreName,
   setDescription,
-  setCategory,
+  setAddress,
+  setPhone,
+  setEmail,
   createStore,
+  loading,
 }) => {
   return (
     <>
@@ -79,34 +100,54 @@ const FormDataStore = ({
             setStoreName(e.target.value);
           }}
         />
-        <input
-          type="text"
+        <textarea
+          name="desc"
+          id="desc"
           placeholder="Store Description"
           className="border-2 p-2 rounded-md w-full outline-none"
           onChange={(e) => {
             setDescription(e.target.value);
           }}
-        />
-        <select
-          name="category"
-          id="category"
+        ></textarea>
+        <textarea
+          name="address"
+          id="address"
+          placeholder="Store Address"
           className="border-2 p-2 rounded-md w-full outline-none"
           onChange={(e) => {
-            setCategory(e.target.value);
+            setAddress(e.target.value);
           }}
-        >
-          <option value="">Select Category</option>
-          <option value="Clothes">Clothes</option>
-          <option value="Gadget">Gadget</option>
-          <option value="Books">Books</option>
-          <option value="Sports">Sports</option>
-          <option value="Kitchen">Kitchen</option>
-        </select>
+        ></textarea>
+        <input
+          type="text"
+          name="phone"
+          id="phone"
+          placeholder="Phone Number"
+          className="border-2 p-2 rounded-md w-full outline-none"
+          onChange={(e) => {
+            setPhone(e.target.value);
+          }}
+        />
+        <input
+          type="text"
+          name="email"
+          id="email"
+          placeholder="Email"
+          className="border-2 p-2 rounded-md w-full outline-none"
+          onChange={(e) => {
+            setEmail(e.target.value);
+          }}
+        />
+
         <button
-          className="py-2 w-full rounded-md shadow bg-[#032ea1] text-white font-semibold"
+          className="w-full h-10 rounded-3xl bg-[#032ea1] shadow shadow-black font-semibold py-2 text-white active:scale-95 duration-75 flex justify-center items-center"
           onClick={createStore}
         >
-          Create Store
+          {loading ? (
+            <ImSpinner2 className="text-lg animate-spin" />
+          ) : (
+            <p>Create Store</p>
+          )}
         </button>
       </div>
     </>
