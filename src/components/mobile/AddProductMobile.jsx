@@ -41,25 +41,25 @@ const ProductForm = ({ userLogin, baseUrl }) => {
   };
 
   const handleSubmit = async (e) => {
+    // Validation
+    if (name === "") {
+      return alert("Please input product name!");
+    } else if (image === null) {
+      return alert("Please add image product!");
+    } else if (category === "") {
+      return alert("Please select category product!");
+    } else if (description.length < 10) {
+      return alert("Please add more description product!");
+    } else if (price < 1) {
+      return alert("Product price at least 1$");
+    } else if (stock < 1) {
+      return alert("Stock product minimal 1");
+    }
+
     setLoading(true);
     e.preventDefault();
 
     try {
-      // Validation
-      if (name === "") {
-        return alert("Please input product name!");
-      } else if (image === null) {
-        return alert("Please add image product!");
-      } else if (category === "") {
-        return alert("Please select category product!");
-      } else if (description.length < 10) {
-        return alert("Please add more description product!");
-      } else if (price < 1) {
-        return alert("Product price at least 1$");
-      } else if (stock < 1) {
-        return alert("Stock product minimal 1");
-      }
-
       const fd = new FormData();
       fd.append("image", image);
       fd.append("userLogin", userLogin);
